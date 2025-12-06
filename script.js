@@ -13,9 +13,28 @@ function populateEpisodeSelector(episodes) {
 
 // Call this function during setup
 function setup() {
-  const allEpisodes = getAllEpisodes(); // provided in episodes.js
-  makePageForEpisodes(allEpisodes);
-  populateEpisodeSelector(allEpisodes);
+  fetchEpisodes();
+}
+
+function fetchEpisodes() {
+  const url = "https://api.tvmaze.com/shows/82/episodes";
+  const rootElem = document.getElementById("episodes");
+  rootElem.innerHTML = "<p class='loading'>Loading episodes…</p>"; // Show loading message
+
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(data => {
+      makePageForEpisodes(data);
+    })
+    .catch(error => {
+      rootElem.innerHTML = "<p class='error'>Failed to load episodes. Please try again later.</p>"; // Show error message
+      console.error("Fetch error:", error); // For debugging purposes
+    });
 }
 
 function pad2(n) {
@@ -77,7 +96,7 @@ function createEpisodeCard(ep) {
 }
 
 function makePageForEpisodes(episodeList) {
-  const container = document.getElementById("episodes") || document.getElementById("root");
+  const container = document.getElementById("episodes");
   container.innerHTML = ""; // clear loading
 
   if (!Array.isArray(episodeList) || episodeList.length === 0) {
@@ -94,7 +113,7 @@ function makePageForEpisodes(episodeList) {
     container.appendChild(card);
   });
 
-  // status row that spans full width (keeps parity with example)
+  // status row that spans full width
   const status = document.createElement("p");
   status.className = "loading";
   status.textContent = `Got ${episodeList.length} episode(s)`;
