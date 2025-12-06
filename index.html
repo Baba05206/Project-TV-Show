@@ -1,3 +1,4 @@
+<!-- ...existing code... -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,8 +10,22 @@
   </head>
 
   <body>
-    <div id="root">
-    </div>
+    <header>
+      <h1>TV Show Episodes</h1>
+      <p class="attribution">Data from <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVMaze.com</a></p>
+    </header>
+
+    <main id="root" role="main" aria-live="polite">
+      <section id="episodes" class="episodes-root" aria-label="Episodes list">
+        <p class="loading">Loading episodes…</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Source: <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVMaze</a>
+      </p>
+    </footer>
 
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
     <script src="episodes.js"></script>
