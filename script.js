@@ -1,7 +1,21 @@
 // ...existing code...
+
+function populateEpisodeSelector(episodes) {
+  const selector = document.getElementById("episode-selector");
+
+  episodes.forEach((episode) => {
+    const option = document.createElement("option");
+    option.value = episode.id; // Assuming each episode has a unique ID
+    option.textContent = `${makeEpisodeCode(episode)} - ${episode.name}`;
+    selector.appendChild(option);
+  });
+}
+
+// Call this function during setup
 function setup() {
   const allEpisodes = getAllEpisodes(); // provided in episodes.js
   makePageForEpisodes(allEpisodes);
+  populateEpisodeSelector(allEpisodes);
 }
 
 function pad2(n) {
@@ -87,4 +101,44 @@ function makePageForEpisodes(episodeList) {
   container.appendChild(status);
 }
 
+// Reset functionality
+const resetButton = document.createElement("button");
+resetButton.textContent = "Show All Episodes";
+resetButton.id = "reset-button";
+resetButton.addEventListener("click", () => {
+  const allEpisodes = getAllEpisodes();
+  makePageForEpisodes(allEpisodes);
+  document.getElementById("episode-selector").value = ""; // Reset selector
+});
+
+document.getElementById("selector-container").appendChild(resetButton);
+
 window.onload = setup;
+
+document.getElementById("search-box").addEventListener("input", (event) => {
+  const searchTerm = event.target.value.toLowerCase();
+  const allEpisodes = getAllEpisodes();
+
+  const filteredEpisodes = allEpisodes.filter((episode) => {
+    const nameMatch = episode.name.toLowerCase().includes(searchTerm);
+    const summaryMatch = episode.summary && episode.summary.toLowerCase().includes(searchTerm);
+    return nameMatch || summaryMatch;
+  });
+
+  makePageForEpisodes(filteredEpisodes);
+
+  const searchCount = document.getElementById("search-count");
+  searchCount.textContent = `${filteredEpisodes.length} episode(s) found`;
+});
+
+document.getElementById("episode-selector").addEventListener("change", (event) => {
+  const selectedEpisodeId = event.target.value;
+  const allEpisodes = getAllEpisodes();
+
+  if (selectedEpisodeId) {
+    const selectedEpisode = allEpisodes.find((episode) => episode.id == selectedEpisodeId);
+    makePageForEpisodes([selectedEpisode]);
+  } else {
+    makePageForEpisodes(allEpisodes);
+  }
+});
