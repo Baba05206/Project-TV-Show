@@ -88,3 +88,19 @@ function makePageForEpisodes(episodeList) {
 }
 
 window.onload = setup;
+
+document.getElementById("search-box").addEventListener("input", (event) => {
+  const searchTerm = event.target.value.toLowerCase();
+  const allEpisodes = getAllEpisodes();
+
+  const filteredEpisodes = allEpisodes.filter((episode) => {
+    const nameMatch = episode.name.toLowerCase().includes(searchTerm);
+    const summaryMatch = episode.summary && episode.summary.toLowerCase().includes(searchTerm);
+    return nameMatch || summaryMatch;
+  });
+
+  makePageForEpisodes(filteredEpisodes);
+
+  const searchCount = document.getElementById("search-count");
+  searchCount.textContent = `${filteredEpisodes.length} episode(s) found`;
+});
