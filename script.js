@@ -1,4 +1,4 @@
-// ...existing code...
+//JS existing code
 
 const showCache = {};
 
@@ -29,36 +29,44 @@ async function fetchAndPopulateShows() {
       showSelector.appendChild(option);
     });
   } catch (error) {
-    console.error("Error fetching shows:", error); // Debugging log
+    console.error("Error fetching shows:", error); 
     alert("Failed to load shows. Please try again later.");
   }
 }
 
 function populateEpisodeSelector(episodes) {
   const selector = document.getElementById("episode-selector");
+  selector.innerHTML = `<option value="">Select an episode...</option>`; // reset
 
   episodes.forEach((episode) => {
     const option = document.createElement("option");
-    option.value = episode.id; // Assuming each episode has a unique ID
+    option.value = episode.id;
     option.textContent = `${makeEpisodeCode(episode)} - ${episode.name}`;
     selector.appendChild(option);
   });
 }
 
-// Call this function during setup
+// Called on page load
 function setup() {
   fetchAndPopulateShows();
+  
+  // initial helpful message
+  const rootElem = document.getElementById("episodes");
+  rootElem.innerHTML = "<p class='loading'>Select a show to display episodes.</p>";
+
+  // default episodes if needed
   const allEpisodes = getAllEpisodes(); // provided in episodes.js
-  makePageForEpisodes(allEpisodes);
   populateEpisodeSelector(allEpisodes);
 }
 
-function fetchEpisodes() {
-  const url = "https://api.tvmaze.com/shows/82/episodes";
+function fetchEpisodes(showId) {
+  const url = `https://api.tvmaze.com/shows/${showId}/episodes`;
   const rootElem = document.getElementById("episodes");
-  rootElem.innerHTML = "<p class='loading'>Loading episodes…</p>"; // Show loading message
 
-  fetch(url)
+  // Show helpful loading message
+  rootElem.innerHTML = `<p class='loading'>Loading episode list…</p>`;
+
+  return fetch(url)
     .then(response => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -67,10 +75,11 @@ function fetchEpisodes() {
     })
     .then(data => {
       makePageForEpisodes(data);
+      return data;
     })
     .catch(error => {
-      rootElem.innerHTML = "<p class='error'>Failed to load episodes. Please try again later.</p>"; // Show error message
-      console.error("Fetch error:", error); // For debugging purposes
+      rootElem.innerHTML = "<p class='error'>Failed to load episodes. Please try again later.</p>";
+      console.error("Fetch error:", error);
     });
 }
 
@@ -85,9 +94,9 @@ function makeEpisodeCode(episode) {
 function createEpisodeCard(ep) {
   const article = document.createElement("article");
   article.className = "episode-card";
-  article.id = `episode-${ep.id}`; // Add unique ID for scrolling
+  article.id = `episode-${ep.id}`;
 
-  // image (medium preferred)
+  // image if available
   if (ep.image && (ep.image.medium || ep.image.original)) {
     const img = document.createElement("img");
     img.src = ep.image.medium || ep.image.original;
@@ -100,7 +109,6 @@ function createEpisodeCard(ep) {
     article.appendChild(placeholder);
   }
 
-  // body
   const body = document.createElement("div");
   body.className = "episode-body";
 
@@ -119,7 +127,6 @@ function createEpisodeCard(ep) {
   summary.innerHTML = ep.summary ? ep.summary : "<em>No summary available.</em>";
   body.appendChild(summary);
 
-  // optional link (matches example look)
   if (ep.url) {
     const link = document.createElement("a");
     link.href = ep.url;
@@ -135,33 +142,27 @@ function createEpisodeCard(ep) {
 
 function makePageForEpisodes(episodeList) {
   const container = document.getElementById("episodes");
-  container.innerHTML = ""; // clear loading
+  container.innerHTML = ""; 
 
   if (!Array.isArray(episodeList) || episodeList.length === 0) {
-    const msg = document.createElement("p");
-    msg.className = "loading";
-    msg.textContent = "No episodes found.";
-    container.appendChild(msg);
+    container.innerHTML = `<p class="loading">No episodes found.</p>`;
     return;
   }
 
-  // append each episode card to the grid
   episodeList.forEach((ep) => {
     const card = createEpisodeCard(ep);
     container.appendChild(card);
   });
 
-  // status row that spans full width
   const status = document.createElement("p");
   status.className = "loading";
-  status.textContent = `Got ${episodeList.length} episode(s)`;
+  status.textContent = `Showing ${episodeList.length} episode(s)`;
   container.appendChild(status);
 }
 
-// Removed the reset button functionality
-
 window.onload = setup;
 
+// SEARCH FILTER
 document.getElementById("search-box").addEventListener("input", (event) => {
   const searchTerm = event.target.value.toLowerCase();
   const episodeCards = document.querySelectorAll(".episode-card");
@@ -184,6 +185,7 @@ document.getElementById("search-box").addEventListener("input", (event) => {
   searchCount.textContent = `${matchCount} episode(s) found`;
 });
 
+// EPISODE SELECT DROPDOWN SCROLLING
 document.getElementById("episode-selector").addEventListener("change", (event) => {
   const selectedEpisodeId = event.target.value;
 
@@ -195,28 +197,23 @@ document.getElementById("episode-selector").addEventListener("change", (event) =
   }
 });
 
+// SHOW SELECTOR – fetch episodes for selected show
 document.getElementById("show-selector").addEventListener("change", async (event) => {
   const selectedShowId = event.target.value;
-  console.log("Selected show ID:", selectedShowId); // Debugging log
+  console.log("Selected show ID:", selectedShowId);
 
   try {
     if (selectedShowId) {
-      const response = await fetch(`https://api.tvmaze.com/shows/${selectedShowId}/episodes`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch episodes: ${response.status}`);
-      }
-      const episodes = await response.json();
-
-      console.log("Fetched episodes:", episodes); // Debugging log
-      makePageForEpisodes(episodes);
+      const episodes = await fetchEpisodes(selectedShowId);
       populateEpisodeSelector(episodes);
     } else {
-      const allEpisodes = getAllEpisodes(); // Default to all episodes
+      // resetting to default episodes
+      const allEpisodes = getAllEpisodes();
       makePageForEpisodes(allEpisodes);
       populateEpisodeSelector(allEpisodes);
     }
   } catch (error) {
-    console.error("Error fetching episodes:", error); // Debugging log
+    console.error("Error fetching episodes:", error);
     alert("Failed to load episodes. Please try again later.");
   }
 });

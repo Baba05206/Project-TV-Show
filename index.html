@@ -11,24 +11,25 @@
   <body>
     <header>
       <h1>TV Show Episodes</h1>
-      <p class="attribution">Data from <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVMaze.com</a></p>
+      <p class="attribution">
+        Data from
+        <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVMaze.com</a>
+      </p>
     </header>
 
-    <div id="search-container">
-      <input type="text" id="search-box" placeholder="Search episodes...">
-      <p id="search-count"></p>
-    </div>
+    <!-- NEW: unified toolbar row -->
+    <div id="toolbar">
+      <input type="text" id="search-box" placeholder="Search episodes..." />
 
-    <div id="selector-container">
-      <select id="episode-selector">
-        <option value="">Select an episode...</option>
-      </select>
-    </div>
-
-    <div id="show-selector-container">
       <select id="show-selector">
         <option value="">Select a show...</option>
       </select>
+
+      <select id="episode-selector">
+        <option value="">Select an episode...</option>
+      </select>
+
+      <p id="search-count"></p>
     </div>
 
     <main id="root" role="main" aria-live="polite">
@@ -39,14 +40,12 @@
 
     <footer>
       <p>
-        Source: <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVMaze</a>
+        Source:
+        <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer">TVMaze</a>
       </p>
     </footer>
 
-    <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
     <script src="episodes.js"></script>
-
-    <!-- Loads YOUR javascript code -->
     <script src="script.js"></script>
   </body>
 </html>
