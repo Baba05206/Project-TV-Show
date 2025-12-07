@@ -17,15 +17,15 @@
       </p>
     </header>
 
-    <!-- NEW: unified toolbar row -->
     <div id="toolbar">
-      <input type="text" id="search-box" placeholder="Search episodes..." />
+      <input type="text" id="search-box" placeholder="Search shows..." />
+      <button id="show-list-button" style="display: none;">🔙 Back to Shows</button> 
 
       <select id="show-selector">
         <option value="">Select a show...</option>
       </select>
 
-      <select id="episode-selector">
+      <select id="episode-selector" style="display: none;">
         <option value="">Select an episode...</option>
       </select>
 
@@ -33,7 +33,12 @@
     </div>
 
     <main id="root" role="main" aria-live="polite">
-      <section id="episodes" class="episodes-root" aria-label="Episodes list">
+      
+      <section id="shows-listing" class="shows-root" aria-label="Shows list">
+        <p class="loading">Loading shows…</p>
+      </section>
+
+      <section id="episodes" class="episodes-root" aria-label="Episodes list" style="display: none;">
         <p class="loading">Loading episodes…</p>
       </section>
     </main>

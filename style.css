@@ -77,11 +77,21 @@ header a {
 }
 
 #toolbar input,
-#toolbar select {
+#toolbar select,
+#toolbar button {
   padding: 0.55rem;
   font-size: 1rem;
   border: 1px solid var(--muted);
   border-radius: 4px;
+}
+
+#toolbar button {
+  background-color: var(--card-bg);
+  cursor: pointer;
+}
+
+#toolbar button:hover {
+  background-color: #eee;
 }
 
 #toolbar input {
@@ -100,6 +110,75 @@ header a {
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* ------------------------------
+   Shows Grid (NEW)
+------------------------------ */
+.shows-root {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Wider for shows */
+  align-items: start;
+  padding: 0;
+}
+
+/* Show Cards (NEW) */
+.show-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(11, 16, 22, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  cursor: pointer; /* Indicate clickability */
+}
+
+.show-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(11, 16, 22, 0.08);
+}
+
+.show-media {
+  width: 100%;
+  height: 180px; /* Fixed height for image */
+  object-fit: cover;
+  background: #e9eef4;
+}
+
+.show-body {
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.show-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.show-meta {
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.show-summary {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text);
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Limit summary lines for uniform height */
+  text-overflow: ellipsis;
+}
+
 
 /* ------------------------------
    Episodes Grid
@@ -143,7 +222,7 @@ header a {
 /* Episode image */
 .episode-media {
   width: 100%;
-  height: 160px;
+  height: 160px; /* Fixed height for image */
   object-fit: cover;
   background: #e9eef4;
 }
@@ -175,6 +254,11 @@ header a {
   color: var(--text);
   flex: 1;
   overflow: hidden;
+  /* Line clamping for uniform height */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; 
+  text-overflow: ellipsis;
 }
 
 /* Link */
@@ -215,6 +299,9 @@ footer a {
 @media (max-width: 480px) {
   .episode-media {
     height: 140px;
+  }
+  .show-media {
+    height: 160px;
   }
 
   main#root {
